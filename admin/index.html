@@ -6,68 +6,15 @@
   <title>لوحة تحكم الأدمن</title>
   <link rel="stylesheet" href="../styles/main.css" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      background-color: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 90%;
-      max-width: 500px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #1666c1;
-    }
-    .error {
-      color: red;
-      text-align: center;
-      display: none;
-      margin-top: 10px;
-    }
-    #adminForm {
-      display: none;
-    }
-    .output {
-      background-color: #f1f1f1;
-      padding: 10px;
-      border-radius: 8px;
-      font-family: monospace;
-      white-space: pre-wrap;
-      margin-top: 15px;
-      overflow-x: auto;
-      max-height: 300px;
-    }
+    body { font-family: Arial, sans-serif; background-color: #f2f2f2; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .container { background-color: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 90%; max-width: 500px; }
+    h2 { text-align: center; margin-bottom: 20px; }
+    input, select, button { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+    button { background-color: #1a73e8; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #1666c1; }
+    .error { color: red; text-align: center; display: none; margin-top: 10px; }
+    #adminForm { display: none; }
+    .output { background-color: #f1f1f1; padding: 10px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; margin-top: 15px; overflow-x: auto; max-height: 300px; }
   </style>
 </head>
 <body>
@@ -83,9 +30,13 @@
 
   <div id="adminForm">
     <h2>نشر منتج جديد</h2>
+
+    <!-- إضافة رفع صورة -->
+    <input type="file" id="uploadImage" accept="image/*" />
+    <input type="text" id="productImage" placeholder="رابط الصورة أو قم برفع صورة" required />
+
     <input type="text" id="productName" placeholder="اسم المنتج" required />
     <input type="number" id="productPrice" placeholder="السعر" required min="1" />
-    <input type="text" id="productImage" placeholder="رابط الصورة" required />
     <select id="productCategory" required>
       <option value="" disabled selected>اختر القسم</option>
       <option value="devices">الأجهزة</option>
@@ -116,6 +67,17 @@
     }
   }
 
+  document.getElementById('uploadImage').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('productImage').value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
   function generateCode() {
     const name = document.getElementById("productName").value.trim();
     const price = parseFloat(document.getElementById("productPrice").value.trim());
@@ -139,7 +101,7 @@
 <!-- نهاية المنتج -->`.trim();
 
     document.getElementById("codeOutput").textContent = code;
-    alert("انسخ الكود وضعه داخل ملف القسم المطلوب مثل " + category + ".html");
+    alert("انسخ الكود وضعه داخل ملف القسم المناسب مثل " + category + ".html");
   }
 </script>
 
