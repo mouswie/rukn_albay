@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>لوحة تحكم الأدمن</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1666c1;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      display: none;
+      margin-top: 10px;
+    }
+    #adminForm {
+      display: none;
+    }
+    .output {
+      background-color: #f1f1f1;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div id="loginForm">
+    <h2>تسجيل دخول الأدمن</h2>
+    <input type="email" id="email" placeholder="البريد الإلكتروني" required />
+    <input type="password" id="password" placeholder="كلمة المرور" required />
+    <button onclick="login()">دخول</button>
+    <p class="error" id="loginError">بيانات الدخول غير صحيحة</p>
+  </div>
+
+  <div id="adminForm">
+    <h2>نشر منتج جديد</h2>
+    <input type="text" id="productName" placeholder="اسم المنتج" required />
+    <input type="text" id="productPrice" placeholder="السعر" required />
+    <input type="text" id="productImage" placeholder="رابط الصورة" required />
+    <button onclick="generateCode()">إنشاء الكود</button>
+
+    <div class="output" id="codeOutput"></div>
+  </div>
+</div>
+
+<script>
+  function login() {
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+    const loginForm = document.getElementById("loginForm");
+    const adminForm = document.getElementById("adminForm");
+    const error = document.getElementById("loginError");
+
+    if (email === "alihaidernet.ah@gmail.com" && pass === "55663215566321") {
+      loginForm.style.display = "none";
+      adminForm.style.display = "block";
+    } else {
+      error.style.display = "block";
+    }
+  }
+
+  function generateCode() {
+    const name = document.getElementById("productName").value;
+    const price = document.getElementById("productPrice").value;
+    const img = document.getElementById("productImage").value;
+
+    const code = `
+<div class="product-card">
+  <img src="${img}" alt="${name}">
+  <h3>${name}</h3>
+  <p>${price} د.ع</p>
+  <button onclick="addToCart('${name}', ${price})">أضف إلى السلة</button>
+</div>`.trim();
+
+    document.getElementById("codeOutput").textContent = code;
+  }
+</script>
+
+</body>
+</html>

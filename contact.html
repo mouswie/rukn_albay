@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>اتصل بنا - ركن البيت</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+    }
+
+    header {
+      background-color: #004aad;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    nav {
+      background-color: #003c8f;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+      font-size: 18px;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    main {
+      padding: 40px;
+      text-align: center;
+    }
+
+    form {
+      background-color: white;
+      max-width: 500px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #004aad;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #003c8f;
+    }
+
+    .social {
+      margin-top: 30px;
+    }
+
+    .social a {
+      display: inline-block;
+      margin: 0 10px;
+      font-size: 20px;
+      text-decoration: none;
+      color: #004aad;
+    }
+
+    footer {
+      background-color: #004aad;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      nav a {
+        display: block;
+        margin: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>اتصل بنا</h1>
+    <p>نحن هنا لخدمتك، لا تتردد بالتواصل معنا</p>
+  </header>
+
+  <nav>
+    <a href="index.html">🏠 الرئيسية</a>
+    <a href="products/appliances.html">🧺 أجهزة منزلية</a>
+    <a href="products/tools.html">🔧 عدد يدوية</a>
+    <a href="products/electronics.html">📱 إلكترونيات</a>
+    <a href="products/devices.html">🖥️ أجهزة</a>
+    <a href="cart.html">🛒 السلة</a>
+  </nav>
+
+  <main>
+    <form>
+      <h2>راسلنا مباشرة</h2>
+      <input type="text" placeholder="الاسم الكامل" required />
+      <input type="email" placeholder="البريد الإلكتروني" required />
+      <textarea rows="5" placeholder="اكتب رسالتك هنا..." required></textarea>
+      <button type="submit">إرسال</button>
+    </form>
+
+    <div class="social">
+      <h3>أو تواصل معنا عبر:</h3>
+      <a href="https://wa.me/9647761384712" target="_blank">📱 واتساب</a>
+      <a href="https://www.facebook.com/share/1An56M2tX" target="_blank">📘 فيسبوك</a>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 ركن البيت - جميع الحقوق محفوظة
+  </footer>
+
+</body>
+</html>

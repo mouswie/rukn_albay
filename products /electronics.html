@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>إلكترونيات | ركن البيت</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+  <style>
+    body {
+      background: #f4f9ff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0; padding: 20px;
+      color: #023e8a;
+    }
+    header {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 25px;
+      color: #0077b6;
+      font-weight: bold;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 22px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .product-card img {
+      max-width: 100%;
+      height: 140px;
+      object-fit: contain;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    .product-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+    .product-card p {
+      margin: 0 0 12px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #0077b6;
+    }
+    form {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    input[type="number"] {
+      width: 60px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      border: 1px solid #90caf9;
+      font-size: 1rem;
+      text-align: center;
+    }
+    button {
+      padding: 7px 14px;
+      background-color: #0077b6;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #023e8a;
+    }
+    nav {
+      max-width: 1000px;
+      margin: 10px auto 30px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    nav a {
+      text-decoration: none;
+      color: #0077b6;
+      font-weight: 600;
+      padding: 8px 16px;
+      border: 1px solid #0077b6;
+      border-radius: 7px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    nav a:hover, nav a.active {
+      background-color: #0077b6;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<header>إلكترونيات</header>
+
+<nav>
+  <a href="../index.html">الرئيسية</a>
+  <a href="appliances.html">أجهزة منزلية</a>
+  <a href="tools.html">عدد يدوية</a>
+  <a href="electronics.html" class="active">إلكترونيات</a>
+  <a href="devices.html">أجهزة</a>
+  <a href="../cart.html">سلة الشراء</a>
+</nav>
+
+<div class="products-grid">
+
+  <!-- مثال منتج -->
+  <div class="product-card">
+    <img src="../images/headphones.jpg" alt="سماعات رأس" />
+    <h3>سماعات رأس</h3>
+    <p>60,000 د.ع</p>
+    <form action="../cart.html" method="GET" onsubmit="return true;">
+      <input type="hidden" name="name" value="سماعات رأس" />
+      <input type="hidden" name="price" value="60000" />
+      <input type="number" name="qty" value="1" min="1" />
+      <button type="submit">أضف إلى السلة</button>
+    </form>
+  </div>
+
+  <div class="product-card">
+    <img src="../images/smartwatch.jpg" alt="ساعة ذكية" />
+    <h3>ساعة ذكية</h3>
+    <p>120,000 د.ع</p>
+    <form action="../cart.html" method="GET" onsubmit="return true;">
+      <input type="hidden" name="name" value="ساعة ذكية" />
+      <input type="hidden" name="price" value="120000" />
+      <input type="number" name="qty" value="1" min="1" />
+      <button type="submit">أضف إلى السلة</button>
+    </form>
+  </div>
+
+  <!-- أضف المزيد من المنتجات بنفس النمط -->
+
+</div>
+
+</body>
+</html>
