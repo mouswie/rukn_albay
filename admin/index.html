@@ -28,12 +28,13 @@
       text-align: center;
       margin-bottom: 20px;
     }
-    input, textarea {
+    input {
       width: 100%;
       padding: 12px;
       margin-bottom: 15px;
       border: 1px solid #ccc;
       border-radius: 6px;
+      box-sizing: border-box;
     }
     button {
       width: 100%;
@@ -43,6 +44,7 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
     }
     button:hover {
       background-color: #1666c1;
@@ -62,6 +64,9 @@
       border-radius: 8px;
       font-family: monospace;
       white-space: pre-wrap;
+      margin-top: 15px;
+      overflow-x: auto;
+      max-height: 300px;
     }
   </style>
 </head>
@@ -79,8 +84,15 @@
   <div id="adminForm">
     <h2>نشر منتج جديد</h2>
     <input type="text" id="productName" placeholder="اسم المنتج" required />
-    <input type="text" id="productPrice" placeholder="السعر" required />
+    <input type="number" id="productPrice" placeholder="السعر" required min="1" />
     <input type="text" id="productImage" placeholder="رابط الصورة" required />
+    <select id="productCategory" required>
+      <option value="" disabled selected>اختر القسم</option>
+      <option value="devices">الأجهزة</option>
+      <option value="tools">الأدوات</option>
+      <option value="electronics">الإلكترونيات</option>
+      <option value="appliances">الأجهزة المنزلية</option>
+    </select>
     <button onclick="generateCode()">إنشاء الكود</button>
 
     <div class="output" id="codeOutput"></div>
@@ -89,8 +101,8 @@
 
 <script>
   function login() {
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("password").value.trim();
     const loginForm = document.getElementById("loginForm");
     const adminForm = document.getElementById("adminForm");
     const error = document.getElementById("loginError");
@@ -98,25 +110,36 @@
     if (email === "alihaidernet.ah@gmail.com" && pass === "55663215566321") {
       loginForm.style.display = "none";
       adminForm.style.display = "block";
+      error.style.display = "none";
     } else {
       error.style.display = "block";
     }
   }
 
   function generateCode() {
-    const name = document.getElementById("productName").value;
-    const price = document.getElementById("productPrice").value;
-    const img = document.getElementById("productImage").value;
+    const name = document.getElementById("productName").value.trim();
+    const price = parseFloat(document.getElementById("productPrice").value.trim());
+    const img = document.getElementById("productImage").value.trim();
+    const category = document.getElementById("productCategory").value;
+
+    if (!name || !price || !img || !category) {
+      alert("يرجى تعبئة جميع الحقول واختيار القسم");
+      return;
+    }
 
     const code = `
+<!-- منتج جديد -->
 <div class="product-card">
   <img src="${img}" alt="${name}">
-  <h3>${name}</h3>
-  <p>${price} د.ع</p>
-  <button onclick="addToCart('${name}', ${price})">أضف إلى السلة</button>
-</div>`.trim();
+  <h2>${name}</h2>
+  <p>السعر: ${price.toLocaleString()} د.ع</p>
+  <label>الكمية: <input type="number" min="1" value="1" class="quantity" /></label>
+  <button onclick="addToCart('${name}', ${price}, this)">أضف إلى السلة</button>
+</div>
+<!-- نهاية المنتج -->`.trim();
 
     document.getElementById("codeOutput").textContent = code;
+    alert("انسخ الكود وضعه داخل ملف القسم المطلوب مثل " + category + ".html");
   }
 </script>
 
