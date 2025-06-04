@@ -1,34 +1,135 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>لوحة تحكم الأدمن - نشر منتج</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; direction: rtl; }
-    input, button, select { display: block; margin: 10px 0; width: 100%; padding: 8px; font-size: 1rem; }
-    #publishSection { display: none; }
-    #status { margin-top: 15px; }
+    /* الخطوط والألوان */
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    main {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 3px 15px rgb(0 0 0 / 0.1);
+      width: 100%;
+      max-width: 450px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #004085;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 10px 0 15px 0;
+      font-size: 1rem;
+      border: 1.8px solid #ddd;
+      border-radius: 6px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+      font-weight: 500;
+    }
+    input:focus, select:focus {
+      border-color: #004085;
+      outline: none;
+      box-shadow: 0 0 5px #004085aa;
+    }
+    button {
+      background-color: #004085;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #003060;
+    }
+    #logoutBtn {
+      width: auto;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      background-color: #c82333;
+      margin-bottom: 20px;
+      float: left;
+      border-radius: 6px;
+    }
+    #logoutBtn:hover {
+      background-color: #a71d2a;
+    }
+    #status {
+      margin-top: 15px;
+      min-height: 24px;
+      font-weight: 600;
+      text-align: center;
+    }
+    #imageInput {
+      padding: 3px;
+    }
+    .product-card img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    /* Clear floats */
+    .clearfix::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 500px) {
+      body {
+        padding: 15px 10px;
+      }
+      main {
+        padding: 20px 15px;
+        max-width: 100%;
+      }
+      button, input, select {
+        font-size: 0.95rem;
+      }
+      #logoutBtn {
+        float: none;
+        width: 100%;
+        margin-bottom: 15px;
+      }
+    }
   </style>
 </head>
 <body>
 
+<main>
   <h2 id="pageTitle">تسجيل دخول الأدمن</h2>
 
   <div id="loginSection">
-    <input type="email" id="emailInput" placeholder="البريد الإلكتروني" />
-    <input type="password" id="passwordInput" placeholder="كلمة المرور" />
+    <input type="email" id="emailInput" placeholder="البريد الإلكتروني" autocomplete="username" />
+    <input type="password" id="passwordInput" placeholder="كلمة المرور" autocomplete="current-password" />
     <button id="loginBtn">تسجيل الدخول</button>
   </div>
 
-  <div id="publishSection">
-    <button id="logoutBtn" style="float:left; margin-bottom: 20px;">تسجيل خروج</button>
+  <div id="publishSection" style="display:none;">
+    <button id="logoutBtn" class="clearfix">تسجيل خروج</button>
     <h2>نشر منتج جديد</h2>
 
     <input type="file" id="imageInput" accept="image/*" />
     <input type="text" id="productTitle" placeholder="عنوان المنتج" />
     <input type="number" id="productPrice" placeholder="سعر المنتج (بالدينار العراقي)" min="0" step="0.01" />
-    
-    <select id="sectionFile">
+
+    <select id="sectionFile" aria-label="اختر القسم">
       <option value="">اختر القسم</option>
       <option value="devices.html">الأجهزة</option>
       <option value="tools.html">عدد يدوية</option>
@@ -40,12 +141,14 @@
 
     <div id="status"></div>
   </div>
+</main>
 
 <script>
-  // بيانات الأدمن مشفرة بـ Base64
-  const ADMIN_EMAIL = atob('YWxpaGFpZGVybmV0LmFoQGdtYWlsLmNvbQ=='); // alihaidernet.ah@gmail.com
-  const ADMIN_PASSWORD = atob('NTU2NjMyMTU1NTYzMjE='); // 55663215566321
+  // *** البريد وكلمة السر بدون تشفير ***
+  const ADMIN_EMAIL = 'alihaidernet.ah@gmail.com';
+  const ADMIN_PASSWORD = '55663215566321';
 
+  // بيانات اعدادات رفع الصور و GitHub
   const CLIENT_ID = '46aa6ce80146b0e';
   const GITHUB_TOKEN = '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';
   const OWNER = 'mouswie';
@@ -79,20 +182,20 @@
 
   document.getElementById('loginBtn').onclick = () => {
     const email = document.getElementById('emailInput').value.trim();
-    const pass = document.getElementById('passwordInput').value;
+    const pass = document.getElementById('passwordInput').value.trim();
 
     if(email === ADMIN_EMAIL && pass === ADMIN_PASSWORD){
       localStorage.setItem('admin_logged_in', 'true');
       checkLogin();
     } else {
-      showStatus('خطأ: البريد الإلكتروني أو كلمة المرور غير صحيحة', true);
+      showStatus('❌ البريد الإلكتروني أو كلمة المرور غير صحيحة', true);
     }
   };
 
   document.getElementById('logoutBtn').onclick = () => {
     localStorage.removeItem('admin_logged_in');
     checkLogin();
-    showStatus('تم تسجيل الخروج');
+    showStatus('✅ تم تسجيل الخروج');
   };
 
   checkLogin();
@@ -150,13 +253,13 @@
   }
 
   async function addProductToSection(sectionFileName, productHtml) {
-    showStatus('جاري جلب ملف القسم...');
+    showStatus('⏳ جاري جلب ملف القسم...');
     const fileData = await getFileContent(sectionFileName);
     const decodedContent = decodeURIComponent(escape(atob(fileData.content)));
     const newContent = productHtml + '\n' + decodedContent;
-    showStatus('جاري تحديث الملف في GitHub...');
+    showStatus('⏳ جاري تحديث الملف في GitHub...');
     await updateFileContent(sectionFileName, newContent, fileData.sha, 'نشر منتج جديد');
-    showStatus('تم نشر المنتج بنجاح!');
+    showStatus('✅ تم نشر المنتج بنجاح!');
   }
 
   document.getElementById('publishBtn').onclick = async () => {
@@ -166,12 +269,12 @@
     const imageFile = document.getElementById('imageInput').files[0];
 
     if (!title || !price || !section || !imageFile) {
-      showStatus('يرجى تعبئة جميع الحقول واختيار صورة', true);
+      showStatus('❌ يرجى تعبئة جميع الحقول واختيار صورة', true);
       return;
     }
 
     try {
-      showStatus('جاري رفع الصورة...');
+      showStatus('⏳ جاري رفع الصورة...');
       const imageUrl = await uploadImageToImgur(imageFile);
       const productHTML = `
 <div class="product-card">
