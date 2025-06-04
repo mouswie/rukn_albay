@@ -1,249 +1,119 @@
+<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>لوحة تحكم الأدمن</title>
-<style>
-  body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
-    color: #222;
-    margin: 0; padding: 0;
-    display: flex; justify-content: center; align-items: center; min-height: 100vh;
-  }
-  #adminApp {
-    background: white;
-    padding: 25px;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
-  }
-  h2 {
-    margin-bottom: 20px;
-    text-align: center;
-    color: #1a73e8;
-  }
-  label {
-    display: block;
-    margin-top: 12px;
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
-  input, select {
-    width: 100%;
-    padding: 8px 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    box-sizing: border-box;
-  }
-  button {
-    margin-top: 20px;
-    background-color: #1a73e8;
-    color: white;
-    border: none;
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background-color: #155ab6;
-  }
-  #message {
-    margin-top: 15px;
-    font-weight: 600;
-    color: red;
-    min-height: 24px;
-    text-align: center;
-  }
-  #logoutBtn {
-    margin-top: 10px;
-    background-color: #e84545;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>لوحة تحكم الأدمن</title>
+  <style>
+    body { font-family: sans-serif; background: #f9f9f9; padding: 20px; }
+    #container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #007bff; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+    button { margin-top: 20px; width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; }
+    #message { margin-top: 15px; text-align: center; font-weight: bold; }
+  </style>
 </head>
 <body>
-<div id="adminApp">
-  <h2>لوحة تحكم الأدمن</h2>
+  <div id="container">
+    <h2>لوحة تحكم الأدمن</h2>
 
-  <label for="sectionSelect">اختر القسم:</label>
-  <select id="sectionSelect">
-    <option value="">-- اختر القسم --</option>
-    <option value="devices.html">أجهزة منزلية</option>
-    <option value="tools.html">عدد يدوية</option>
-    <option value="electronics.html">إلكترونيات</option>
-    <option value="appliances.html">أدوات منزلية</option>
-  </select>
+    <label for="sectionSelect">اختر القسم:</label>
+    <select id="sectionSelect">
+      <option value="">-- اختر القسم --</option>
+      <option value="devices.html">أجهزة منزلية</option>
+      <option value="tools.html">عدد يدوية</option>
+      <option value="electronics.html">إلكترونيات</option>
+      <option value="appliances.html">أدوات منزلية</option>
+    </select>
 
-  <label for="productName">اسم المنتج:</label>
-  <input type="text" id="productName" placeholder="ادخل اسم المنتج" />
+    <label for="productName">اسم المنتج:</label>
+    <input type="text" id="productName" placeholder="اسم المنتج" />
 
-  <label for="productPrice">السعر (دينار عراقي):</label>
-  <input type="number" id="productPrice" placeholder="ادخل السعر" min="0" />
+    <label for="productPrice">السعر (دينار عراقي):</label>
+    <input type="number" id="productPrice" placeholder="السعر" />
 
-  <label for="productImage">صورة المنتج:</label>
-  <input type="file" id="productImage" accept="image/*" />
+    <button onclick="addProduct()">نشر المنتج</button>
 
-  <button id="addProductBtn">إضافة المنتج</button>
-  <button id="logoutBtn">تسجيل الخروج</button>
-  <div id="message"></div>
-</div>
+    <div id="message"></div>
+  </div>
 
-<script>
-(() => {
-  const OWNER = "mouswie";
-  const REPO = "rukn_albay";
-  const BRANCH = "master";
-  const GITHUB_TOKEN = "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";
-  const IMGUR_CLIENT_ID = "46aa6ce80146b0e";
+  <script>
+    const OWNER = "mouswie";
+    const REPO = "rukn_albay";
+    const BRANCH = "master";
+    const TOKEN = "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";
 
-  const messageDiv = document.getElementById("message");
-
-  // تحقق من تسجيل الدخول
-  if(localStorage.getItem("adminLoggedIn") !== "true") {
-    alert("يرجى تسجيل الدخول أولاً");
-    window.location.href = "index.html";
-    return;
-  }
-
-  // تسجيل الخروج
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("adminLoggedIn");
-    window.location.href = "index.html";
-  });
-
-  function showMessage(msg, color = "red") {
-    messageDiv.textContent = msg;
-    messageDiv.style.color = color;
-  }
-
-  // رفع الصورة إلى Imgur
-  async function uploadImageToImgur(file) {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const res = await fetch("https://api.imgur.com/3/image", {
-      method: "POST",
-      headers: {
-        Authorization: "Client-ID " + IMGUR_CLIENT_ID,
-      },
-      body: formData,
-    });
-
-    const data = await res.json();
-    if (!data.success) {
-      throw new Error("فشل رفع الصورة إلى Imgur.");
+    // تحقق من الدخول
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+      window.location.href = "index.html";
     }
-    return data.data.link;
-  }
 
-  // جلب محتوى ملف القسم من GitHub
-  async function getFileContent(fileName) {
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/products/${fileName}?ref=${BRANCH}`;
-    const response = await fetch(url, {
-      headers: { Authorization: `token ${GITHUB_TOKEN}` },
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error("فشل جلب الملف من GitHub: " + (errorData.message || response.statusText));
+    async function getFile(fileName) {
+      const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/products/${fileName}?ref=${BRANCH}`;
+      const res = await fetch(url, {
+        headers: { Authorization: `token ${TOKEN}` }
+      });
+      if (!res.ok) throw new Error("فشل جلب الملف من GitHub");
+      return await res.json();
     }
-    return await response.json();
-  }
 
-  // تحديث ملف القسم على GitHub مع إضافة المنتج في الأعلى
-  async function updateFileContent(fileName, newProductHTML) {
-    const fileData = await getFileContent(fileName);
-    const oldContent = atob(fileData.content);
+    async function updateFile(fileName, newContentHTML) {
+      const file = await getFile(fileName);
+      const oldContent = atob(file.content);
+      const newFullContent = newContentHTML + "\n" + oldContent;
+      const encoded = btoa(newFullContent);
 
-    const updatedContent = newProductHTML + "\n" + oldContent;
-    const base64Content = btoa(updatedContent);
+      const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/products/${fileName}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `token ${TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: "إضافة منتج جديد",
+          content: encoded,
+          sha: file.sha,
+          branch: BRANCH,
+        }),
+      });
 
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/products/${fileName}`;
-    const res = await fetch(url, {
-      method: "PUT",
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: `إضافة منتج جديد: ${fileName}`,
-        content: base64Content,
-        sha: fileData.sha,
-        branch: BRANCH,
-      }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error("فشل تحديث الملف على GitHub: " + (data.message || res.statusText));
+      if (!res.ok) throw new Error("فشل تحديث الملف على GitHub");
     }
-    return data;
-  }
 
-  // بناء كود HTML للمنتج الجديد
-  function buildProductHTML(name, price, imageUrl) {
-    return `
+    function buildProductHTML(name, price) {
+      return `
 <div class="product">
-  <img src="${imageUrl}" alt="${name}" />
   <h3>${name}</h3>
   <p>السعر: ${price} دينار عراقي</p>
-</div>
-`;
-  }
-
-  document.getElementById("addProductBtn").addEventListener("click", async () => {
-    showMessage("");
-
-    const sectionFile = document.getElementById("sectionSelect").value;
-    const productName = document.getElementById("productName").value.trim();
-    const productPrice = document.getElementById("productPrice").value.trim();
-    const productImageFile = document.getElementById("productImage").files[0];
-
-    if (!sectionFile) {
-      showMessage("الرجاء اختيار القسم.");
-      return;
-    }
-    if (!productName) {
-      showMessage("الرجاء إدخال اسم المنتج.");
-      return;
-    }
-    if (!productPrice || isNaN(productPrice) || Number(productPrice) < 0) {
-      showMessage("الرجاء إدخال سعر صحيح.");
-      return;
-    }
-    if (!productImageFile) {
-      showMessage("الرجاء اختيار صورة المنتج.");
-      return;
+</div>`;
     }
 
-    try {
-      showMessage("جارٍ رفع الصورة...");
-      const imageUrl = await uploadImageToImgur(productImageFile);
+    async function addProduct() {
+      const section = document.getElementById("sectionSelect").value;
+      const name = document.getElementById("productName").value.trim();
+      const price = document.getElementById("productPrice").value.trim();
+      const msg = document.getElementById("message");
 
-      showMessage("جارٍ تحديث قسم المنتجات...");
-      const newProductHTML = buildProductHTML(productName, productPrice, imageUrl);
+      msg.textContent = "";
 
-      await updateFileContent(sectionFile, newProductHTML);
+      if (!section || !name || !price) {
+        msg.textContent = "يرجى تعبئة جميع الحقول.";
+        msg.style.color = "red";
+        return;
+      }
 
-      showMessage("تم إضافة المنتج بنجاح!", "green");
-
-      // إعادة تعيين النموذج
-      document.getElementById("sectionSelect").value = "";
-      document.getElementById("productName").value = "";
-      document.getElementById("productPrice").value = "";
-      document.getElementById("productImage").value = "";
-
-    } catch (error) {
-      showMessage("خطأ: " + error.message);
+      try {
+        const html = buildProductHTML(name, price);
+        await updateFile(section, html);
+        msg.textContent = "تم نشر المنتج بنجاح!";
+        msg.style.color = "green";
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.style.color = "red";
+      }
     }
-  });
-})();
-</script>
-
+  </script>
 </body>
 </html>
