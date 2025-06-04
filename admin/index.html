@@ -1,108 +1,190 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>لوحة تحكم الأدمن</title>
-  <link rel="stylesheet" href="../styles/main.css" />
+  <meta charset="UTF-8">
+  <title>لوحة تحكم الأدمن - نشر منتج</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #f2f2f2; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .container { background-color: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 90%; max-width: 500px; }
-    h2 { text-align: center; margin-bottom: 20px; }
-    input, select, button { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-    button { background-color: #1a73e8; color: white; border: none; cursor: pointer; }
-    button:hover { background-color: #1666c1; }
-    .error { color: red; text-align: center; display: none; margin-top: 10px; }
-    #adminForm { display: none; }
-    .output { background-color: #f1f1f1; padding: 10px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; margin-top: 15px; overflow-x: auto; max-height: 300px; }
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; direction: rtl; }
+    input, button, select { display: block; margin: 10px 0; width: 100%; padding: 8px; font-size: 1rem; }
+    #publishSection { display: none; }
+    #status { margin-top: 15px; }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <div id="loginForm">
-    <h2>تسجيل دخول الأدمن</h2>
-    <input type="email" id="email" placeholder="البريد الإلكتروني" required />
-    <input type="password" id="password" placeholder="كلمة المرور" required />
-    <button onclick="login()">دخول</button>
-    <p class="error" id="loginError">بيانات الدخول غير صحيحة</p>
+  <h2 id="pageTitle">تسجيل دخول الأدمن</h2>
+
+  <div id="loginSection">
+    <input type="email" id="emailInput" placeholder="البريد الإلكتروني" />
+    <input type="password" id="passwordInput" placeholder="كلمة المرور" />
+    <button id="loginBtn">تسجيل الدخول</button>
   </div>
 
-  <div id="adminForm">
+  <div id="publishSection">
+    <button id="logoutBtn" style="float:left; margin-bottom: 20px;">تسجيل خروج</button>
     <h2>نشر منتج جديد</h2>
 
-    <!-- إضافة رفع صورة -->
-    <input type="file" id="uploadImage" accept="image/*" />
-    <input type="text" id="productImage" placeholder="رابط الصورة أو قم برفع صورة" required />
-
-    <input type="text" id="productName" placeholder="اسم المنتج" required />
-    <input type="number" id="productPrice" placeholder="السعر" required min="1" />
-    <select id="productCategory" required>
-      <option value="" disabled selected>اختر القسم</option>
-      <option value="devices">الأجهزة</option>
-      <option value="tools">الأدوات</option>
-      <option value="electronics">الإلكترونيات</option>
-      <option value="appliances">الأجهزة المنزلية</option>
+    <input type="file" id="imageInput" accept="image/*" />
+    <input type="text" id="productTitle" placeholder="عنوان المنتج" />
+    <input type="number" id="productPrice" placeholder="سعر المنتج (بالدينار العراقي)" min="0" step="0.01" />
+    
+    <select id="sectionFile">
+      <option value="">اختر القسم</option>
+      <option value="devices.html">الأجهزة</option>
+      <option value="tools.html">عدد يدوية</option>
+      <option value="appliances.html">أجهزة منزلية</option>
+      <option value="electronics.html">إلكترونيات</option>
     </select>
-    <button onclick="generateCode()">إنشاء الكود</button>
 
-    <div class="output" id="codeOutput"></div>
+    <button id="publishBtn">نشر المنتج</button>
+
+    <div id="status"></div>
   </div>
-</div>
 
 <script>
-  function login() {
-    const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("password").value.trim();
-    const loginForm = document.getElementById("loginForm");
-    const adminForm = document.getElementById("adminForm");
-    const error = document.getElementById("loginError");
+  // بيانات الأدمن مشفرة بـ Base64
+  const ADMIN_EMAIL = atob('YWxpaGFpZGVybmV0LmFoQGdtYWlsLmNvbQ=='); // alihaidernet.ah@gmail.com
+  const ADMIN_PASSWORD = atob('NTU2NjMyMTU1NTYzMjE='); // 55663215566321
 
-    if (email === "alihaidernet.ah@gmail.com" && pass === "55663215566321") {
-      loginForm.style.display = "none";
-      adminForm.style.display = "block";
-      error.style.display = "none";
+  const CLIENT_ID = '46aa6ce80146b0e';
+  const GITHUB_TOKEN = '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';
+  const OWNER = 'mouswie';
+  const REPO = 'rukn_albay';
+  const BRANCH = 'main';
+
+  const loginSection = document.getElementById('loginSection');
+  const publishSection = document.getElementById('publishSection');
+  const pageTitle = document.getElementById('pageTitle');
+  const statusDiv = document.getElementById('status');
+
+  function showStatus(msg, isError = false) {
+    statusDiv.textContent = msg;
+    statusDiv.style.color = isError ? 'red' : 'green';
+  }
+
+  function checkLogin() {
+    const saved = localStorage.getItem('admin_logged_in');
+    if (saved === 'true') {
+      loginSection.style.display = 'none';
+      publishSection.style.display = 'block';
+      pageTitle.textContent = 'لوحة تحكم الأدمن - نشر منتج';
+      showStatus('');
     } else {
-      error.style.display = "block";
+      loginSection.style.display = 'block';
+      publishSection.style.display = 'none';
+      pageTitle.textContent = 'تسجيل دخول الأدمن';
+      showStatus('');
     }
   }
 
-  document.getElementById('uploadImage').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+  document.getElementById('loginBtn').onclick = () => {
+    const email = document.getElementById('emailInput').value.trim();
+    const pass = document.getElementById('passwordInput').value;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById('productImage').value = e.target.result;
+    if(email === ADMIN_EMAIL && pass === ADMIN_PASSWORD){
+      localStorage.setItem('admin_logged_in', 'true');
+      checkLogin();
+    } else {
+      showStatus('خطأ: البريد الإلكتروني أو كلمة المرور غير صحيحة', true);
+    }
+  };
+
+  document.getElementById('logoutBtn').onclick = () => {
+    localStorage.removeItem('admin_logged_in');
+    checkLogin();
+    showStatus('تم تسجيل الخروج');
+  };
+
+  checkLogin();
+
+  async function uploadImageToImgur(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const response = await fetch('https://api.imgur.com/3/image', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Client-ID ' + CLIENT_ID
+      },
+      body: formData
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      return data.data.link;
+    } else {
+      throw new Error('فشل رفع الصورة: ' + data.data.error);
+    }
+  }
+
+  async function getFileContent(path) {
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/products/${path}?ref=${BRANCH}`;
+    const response = await fetch(url, {
+      headers: { Authorization: `token ${GITHUB_TOKEN}` }
+    });
+    if (!response.ok) throw new Error('فشل جلب الملف من GitHub');
+    return await response.json();
+  }
+
+  async function updateFileContent(path, newContent, sha, message) {
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/products/${path}`;
+    const body = {
+      message: message,
+      content: btoa(unescape(encodeURIComponent(newContent))),
+      sha: sha,
+      branch: BRANCH
     };
-    reader.readAsDataURL(file);
-  });
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error('فشل تحديث الملف في GitHub: ' + (errorData.message || response.statusText));
+    }
+    return await response.json();
+  }
 
-  function generateCode() {
-    const name = document.getElementById("productName").value.trim();
-    const price = parseFloat(document.getElementById("productPrice").value.trim());
-    const img = document.getElementById("productImage").value.trim();
-    const category = document.getElementById("productCategory").value;
+  async function addProductToSection(sectionFileName, productHtml) {
+    showStatus('جاري جلب ملف القسم...');
+    const fileData = await getFileContent(sectionFileName);
+    const decodedContent = decodeURIComponent(escape(atob(fileData.content)));
+    const newContent = productHtml + '\n' + decodedContent;
+    showStatus('جاري تحديث الملف في GitHub...');
+    await updateFileContent(sectionFileName, newContent, fileData.sha, 'نشر منتج جديد');
+    showStatus('تم نشر المنتج بنجاح!');
+  }
 
-    if (!name || !price || !img || !category) {
-      alert("يرجى تعبئة جميع الحقول واختيار القسم");
+  document.getElementById('publishBtn').onclick = async () => {
+    const title = document.getElementById('productTitle').value.trim();
+    const price = document.getElementById('productPrice').value.trim();
+    const section = document.getElementById('sectionFile').value;
+    const imageFile = document.getElementById('imageInput').files[0];
+
+    if (!title || !price || !section || !imageFile) {
+      showStatus('يرجى تعبئة جميع الحقول واختيار صورة', true);
       return;
     }
 
-    const code = `
-<!-- منتج جديد -->
+    try {
+      showStatus('جاري رفع الصورة...');
+      const imageUrl = await uploadImageToImgur(imageFile);
+      const productHTML = `
 <div class="product-card">
-  <img src="${img}" alt="${name}">
-  <h2>${name}</h2>
-  <p>السعر: ${price.toLocaleString()} د.ع</p>
-  <label>الكمية: <input type="number" min="1" value="1" class="quantity" /></label>
-  <button onclick="addToCart('${name}', ${price}, this)">أضف إلى السلة</button>
-</div>
-<!-- نهاية المنتج -->`.trim();
+  <img src="${imageUrl}" alt="${title}" />
+  <h3>${title}</h3>
+  <p><strong>${price} دينار</strong></p>
+</div>`;
 
-    document.getElementById("codeOutput").textContent = code;
-    alert("انسخ الكود وضعه داخل ملف القسم المناسب مثل " + category + ".html");
-  }
+      await addProductToSection(section, productHTML);
+    } catch (err) {
+      showStatus(err.message, true);
+    }
+  };
 </script>
 
 </body>
