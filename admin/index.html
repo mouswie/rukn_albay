@@ -115,7 +115,7 @@
   const OWNER = "mouswie";
   const REPO = "rukn_albay";
   const BRANCH = "master";
-  const GITHUB_TOKEN = "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";
+  const GITHUB_TOKEN = "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";
 
   const IMGUR_CLIENT_ID = "46aa6ce80146b0e";
 
@@ -204,8 +204,7 @@
   }
 
   // تحديث ملف القسم على GitHub مع إضافة المنتج في الأعلى
-  async function updateFileContent(fileName, newProductHTML, sha) {
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/products/${fileName}`;
+  async function updateFileContent(fileName, newProductHTML) {
     // جلب الملف القديم لإضافة المنتج في الأعلى
     const fileData = await getFileContent(fileName);
 
@@ -219,6 +218,7 @@
     const base64Content = btoa(updatedContent);
 
     // إرسال التحديث
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/products/${fileName}`;
     const res = await fetch(url, {
       method: "PUT",
       headers: {
@@ -264,36 +264,3 @@
       return;
     }
     if (!productName) {
-      showMessage("الرجاء إدخال اسم المنتج.");
-      return;
-    }
-    if (!productPrice || isNaN(productPrice) || Number(productPrice) < 0) {
-      showMessage("الرجاء إدخال سعر صحيح للمنتج.");
-      return;
-    }
-    if (!productImageFile) {
-      showMessage("الرجاء اختيار صورة المنتج.");
-      return;
-    }
-
-    showMessage("يرجى الانتظار... جاري رفع الصورة.");
-
-    try {
-      const imageUrl = await uploadImageToImgur(productImageFile);
-
-      showMessage("تم رفع الصورة. جاري تحديث القسم...");
-
-      const newProductHTML = buildProductHTML(productName, productPrice, imageUrl);
-
-      await updateFileContent(sectionFile, newProductHTML);
-
-      showMessage("تم إضافة المنتج بنجاح!", "green");
-      clearInputs();
-    } catch (error) {
-      showMessage(error.message);
-    }
-  });
-})();
-</script>
-</body>
-</html>
